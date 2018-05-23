@@ -99,9 +99,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="CReate"
-            android:onClick="CreateParkingSpace"
             android:background="@color/colorPrimary"
             android:textColor="@android:color/white"/>
+
 
         <TextView
             android:layout_marginTop="20dp"
