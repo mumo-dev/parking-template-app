@@ -11,15 +11,16 @@ import android.widget.Toast;
 
 import com.example.mumo.parkingapp.R;
 import com.example.mumo.parkingapp.data.BookingLot;
+import com.example.mumo.parkingapp.model.Parking;
 
 import java.util.List;
 
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ItemViewHolder> {
 
-    private List<BookingLot> mListItems;
+    private List<Parking> mListItems;
     private Context mContext;
 
-    public DataAdapter(Context context, List<BookingLot> listItems){
+    public DataAdapter(Context context, List<Parking> listItems){
         mContext = context;
         mListItems = listItems;
     }
@@ -35,8 +36,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ItemViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-         final BookingLot item = mListItems.get(position);
-         holder.mAreaTextView.setText(item.getArea());
+         final Parking item = mListItems.get(position);
+         holder.mAreaTextView.setText(item.getLocation());
          holder.mFeeTextView.setText(String.valueOf(item.getFee()));
          holder.mBookTextView.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -46,7 +47,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ItemViewHolder
          });
     }
 
-    public void setListItems(List<BookingLot> listItems) {
+    public void setListItems(List<Parking> listItems) {
         mListItems = listItems;
         notifyDataSetChanged();
     }

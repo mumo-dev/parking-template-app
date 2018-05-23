@@ -20,8 +20,19 @@ import android.view.MenuItem;
 import com.example.mumo.parkingapp.adapters.DataAdapter;
 import com.example.mumo.parkingapp.data.BookingLot;
 import com.example.mumo.parkingapp.data.FakeData;
+import com.example.mumo.parkingapp.model.Parking;
+import com.example.mumo.parkingapp.model.Slot;
+import com.example.mumo.parkingapp.networking.ApiRestClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private DataAdapter mAdapter;
     private ActionBarDrawerToggle mToggle;
     private static final String TAG = "MainActivity";
+
+    private List<Parking> mParkingList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,toolbar, R.string.drawer_open, R.string.drawer_close);
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
         mDrawerLayout.addDrawerListener(mToggle);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
-           actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -82,10 +96,13 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(decoration);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<BookingLot> fakeData = new FakeData().getBookingLots();
-        mAdapter = new DataAdapter(this, fakeData);
+//        List<BookingLot> fakeData = new FakeData().getBookingLots();
+//        mAdapter = new DataAdapter(this, fakeData);
+        mParkingList = new ArrayList<>();
+        mAdapter = new DataAdapter(this, mParkingList);
         mRecyclerView.setAdapter(mAdapter);
         Log.i(TAG, "onCreate: ");
+        fetchData();
 
     }
 
@@ -108,5 +125,57 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchData() {
+        ApiRestClient.get("/api/parkings", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                super.onStart();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.i(TAG, "onSuccess: " + response.length());
+
+                List<Parking> parkings = new ArrayList<>();
+                if (response.length() > 0) {
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            String location = jsonObject.getString("location");
+                            int fee = jsonObject.getInt("fee");
+                            int startTime = jsonObject.getInt("start_time");
+                            int endTime = jsonObject.getInt("end_time");
+                            String date = jsonObject.getString("created_at");
+                            JSONArray slotsArray = jsonObject.getJSONArray("slots");
+                            List<Slot> parkingSlots = new ArrayList<>();
+                            for (int j = 0; j < slotsArray.length(); j++) {
+                                JSONObject slot = slotsArray.getJSONObject(j);
+                                int slotId = slot.getInt("id");
+                                String slotRefNo = slot.getString("ref_no");
+                                Slot newSlot = new Slot(slotId, slotRefNo);
+                                parkingSlots.add(newSlot);
+
+                            }
+                            Parking parking = new Parking(id, location, fee, parkingSlots, startTime, endTime, date);
+                            parkings.add(parking);
+//                            Log.i(TAG, "slots array:" + slotsArray.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mAdapter.setListItems(parkings);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.i(TAG, "onFailure: " + errorResponse.toString());
+            }
+        });
     }
 }
