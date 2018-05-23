@@ -1,5 +1,6 @@
 package com.example.mumo.parkingapp;
 
+import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,8 +15,9 @@ import android.view.MenuItem;
 
 import com.example.mumo.parkingapp.adapters.PageAdapter;
 import com.example.mumo.parkingapp.fragments.LoginFragment;
+import com.example.mumo.parkingapp.fragments.RegisterFragment;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity  implements RegisterFragment.IViewPagerSwitcher{
 
     private ViewPager mViewPager;
     @Override
@@ -24,6 +26,7 @@ public class AccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
@@ -32,6 +35,9 @@ public class AccountActivity extends AppCompatActivity {
 
 
         TabLayout tabLayout = findViewById(R.id.ta_layout);
+        TabItem loginTab = findViewById(R.id.login_tab);
+
+        TabItem registerTab = findViewById(R.id.register_tab);
         mViewPager= findViewById(R.id.viewpager);
         PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         mViewPager.setAdapter(pageAdapter);
@@ -46,5 +52,10 @@ public class AccountActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void switchToPage(int newPagePosition) {
+        mViewPager.setCurrentItem(newPagePosition);
     }
 }
