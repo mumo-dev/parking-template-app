@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    tools:context=".DashboardActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp">
+        <TextView
+            android:text="Create a Parking space"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/parking_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Location"
+            android:layout_marginBottom="10dp"/>
+        <EditText
+            android:id="@+id/parking_slots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Parking slots available"
+            android:layout_marginBottom="10dp"/>
+        <EditText
+            android:id="@+id/parking_fees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Parking fee per hour"
+            android:layout_marginBottom="10dp"/>
+        <TextView
+            android:text="Working hours"
+            style="?android:listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/parking_start_time"
+                android:text="Start Time"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:layout_weight="2"
+                android:drawableTint="@android:color/holo_purple"
+                android:drawableStart="@drawable/ic_access_alarm_black_24dp"/>
+            <TextView
+                android:id="@+id/parking_start_time_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0000hrs"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/parking_close_time"
+                android:text="Close Time"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:layout_weight="2"
+                android:drawableTint="@android:color/holo_purple"
+                android:drawableStart="@drawable/ic_access_alarm_black_24dp"/>
+            <TextView
+                android:id="@+id/parking_close_time_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0000hrs"/>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_marginTop="16sp"
+            android:id="@+id/btn_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CReate"
+            android:onClick="CreateParkingSpace"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:id="@+id/tv_errors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@android:color/holo_red_light" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
