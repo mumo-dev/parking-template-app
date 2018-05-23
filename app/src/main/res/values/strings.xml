@@ -6,4 +6,5 @@
     <string name="network_error">Error fetching data from server</string>
 
     <string name="spin_prompt">select time</string>
+    <string name="title_activity_slots">SlotsActivity</string>
 </resources>

@@ -1,8 +1,11 @@
 package com.example.mumo.parkingapp;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.mumo.parkingapp.database.ParkingDbContract;
+import com.example.mumo.parkingapp.database.ParkingDbHelper;
+import com.example.mumo.parkingapp.model.BookedSlot;
 import com.example.mumo.parkingapp.model.Parking;
 import com.example.mumo.parkingapp.networking.ApiRestClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -29,10 +35,12 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.example.mumo.parkingapp.database.ParkingDbContract.*;
+
 public class BookingActivity extends AppCompatActivity {
 
     private static final String EXTRA_BOOKING = "com.example.mumo.parkingapp.booking";
-    private static final String TAG ="BookingActivity";
+    private static final String TAG = "BookingActivity";
 
     private Spinner mSpinner;
     private TextView mLocationTextView;
@@ -41,11 +49,13 @@ public class BookingActivity extends AppCompatActivity {
     private Button mBookButton;
 
     private ProgressDialog mProgressDialog;
-    public static Intent newIntent(Context packageContext, Parking parking){
+
+    public static Intent newIntent(Context packageContext, Parking parking) {
         Intent intent = new Intent(packageContext, BookingActivity.class);
         intent.putExtra(EXTRA_BOOKING, parking);
-        return  intent;
+        return intent;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +65,7 @@ public class BookingActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar !=  null){
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         final Parking parking = (Parking) getIntent().getSerializableExtra(EXTRA_BOOKING);
@@ -68,7 +78,7 @@ public class BookingActivity extends AppCompatActivity {
 
         String[] timeSlots = parking.getTimeSlots();
         ArrayAdapter<String> timeSlotAdapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_dropdown_item_1line,timeSlots);
+                this, android.R.layout.simple_dropdown_item_1line, timeSlots);
         mSpinner = findViewById(R.id.time_spinner);
         mSpinner.setAdapter(timeSlotAdapter);
 
@@ -81,13 +91,13 @@ public class BookingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int parking_id = parking.getId();
-                TextView sel_view = (TextView)mSpinner.getSelectedView();
+                TextView sel_view = (TextView) mSpinner.getSelectedView();
                 String value = sel_view.getText().toString();
 //                mErrorTextView.setText("value choosen "+value+": "+parking_id);
                 RequestParams params = new RequestParams();
-                params.put("parking_id",parking_id);
+                params.put("parking_id", parking_id);
                 params.put("time", value);
-                ApiRestClient.post("/api//parkings/book",params,new JsonHttpResponseHandler(){
+                ApiRestClient.post("/api//parkings/book", params, new JsonHttpResponseHandler() {
                     @Override
                     public void onStart() {
                         super.onStart();
@@ -105,19 +115,21 @@ public class BookingActivity extends AppCompatActivity {
                                 String ref_no = response.getString("ref_no");
                                 String time = response.getString("time");
                                 int slotId = response.getInt("slot_id");
-                                String message =" You have successful booked your space";
-                                Toast.makeText(BookingActivity.this,message,Toast.LENGTH_LONG).show();
+                                String message = " You have successful booked your space";
+                                recordBookingToDB(ref_no, time, slotId);
+                                Toast.makeText(BookingActivity.this, message, Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(BookingActivity.this, SlotsActivity.class));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                        }else if (response.has("error")){
+                        } else if (response.has("error")) {
                             try {
                                 mErrorTextView.setText(response.getString("error"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        Log.i(TAG, "onSuccess: "+response.toString());
+                        Log.i(TAG, "onSuccess: " + response.toString());
                     }
 
                     @Override
@@ -134,9 +146,28 @@ public class BookingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void recordBookingToDB(String refno, String time, int slotId) {
+        new RecordAsyncTask().execute(new BookedSlot(slotId, refno, time));
+    }
+
+    private class RecordAsyncTask extends AsyncTask<BookedSlot, Void, Void> {
+
+        @Override
+        protected Void doInBackground(BookedSlot... bookedSlots) {
+            BookedSlot slot = bookedSlots[0];
+            SQLiteDatabase db = new ParkingDbHelper(BookingActivity.this).getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(SlotsSchema.COL_REF_NO, slot.getRefno());
+            values.put(SlotsSchema.COL_SLOT_ID, slot.getSlotId());
+            values.put(SlotsSchema.COL_TIME_BOOKED, slot.getTime());
+            db.insert(SlotsSchema.TABLE_NAME, null, values);
+            return null;
+        }
     }
 }

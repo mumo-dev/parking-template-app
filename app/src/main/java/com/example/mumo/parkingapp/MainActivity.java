@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                         return true;
                     case R.id.nav_slots:
-
+                        startActivity(new Intent(MainActivity.this, SlotsActivity.class));
                         return true;
                     default:
                         return true;

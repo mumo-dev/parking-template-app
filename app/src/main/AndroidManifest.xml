@@ -26,8 +26,14 @@
         <activity
             android:name=".DashboardActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".BookingActivity"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".BookingActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SlotsActivity"
+            android:parentActivityName=".MainActivity">
+
+        </activity>
     </application>
 
 </manifest>
