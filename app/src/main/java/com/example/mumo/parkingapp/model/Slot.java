@@ -1,6 +1,8 @@
 package com.example.mumo.parkingapp.model;
 
-public class Slot {
+import java.io.Serializable;
+
+public class Slot  implements Serializable{
     private int id;
     private String refNo;
 

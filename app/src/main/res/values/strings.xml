@@ -3,4 +3,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="error_message_null">Please fill all fields</string>
+    <string name="network_error">Error fetching data from server</string>
+
+    <string name="spin_prompt">select time</string>
 </resources>

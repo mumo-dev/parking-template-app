@@ -16,6 +16,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.mumo.parkingapp.adapters.DataAdapter;
 import com.example.mumo.parkingapp.data.BookingLot;
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Parking> mParkingList;
 
+    private ProgressBar mProgressBar;
+    private TextView mErrorTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mProgressBar = findViewById(R.id.pb_loading);
+        mErrorTextView = findViewById(R.id.tv_errors_box);
         final DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
         mDrawerLayout.addDrawerListener(mToggle);
@@ -132,12 +140,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStart() {
                 super.onStart();
+                mProgressBar.setVisibility(View.VISIBLE);
+                mErrorTextView.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
-                Log.i(TAG, "onSuccess: " + response.length());
+//                Log.i(TAG, "onSuccess: " + response.length());
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mErrorTextView.setVisibility(View.INVISIBLE);
 
                 List<Parking> parkings = new ArrayList<>();
                 if (response.length() > 0) {
@@ -161,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                             Parking parking = new Parking(id, location, fee, parkingSlots, startTime, endTime, date);
+//                            Log.i(TAG, "Parking time slots: "+parking.getTimeSlots().toString());
                             parkings.add(parking);
 //                            Log.i(TAG, "slots array:" + slotsArray.toString());
                         } catch (JSONException e) {
@@ -174,7 +189,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i(TAG, "onFailure: " + errorResponse.toString());
+//                Log.i(TAG, "onFailure: " + errorResponse.toString());
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.INVISIBLE);
+                mErrorTextView.setVisibility(View.VISIBLE);
+                mErrorTextView.setText(throwable.getMessage());
             }
         });
     }

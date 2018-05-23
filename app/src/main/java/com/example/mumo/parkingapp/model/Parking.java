@@ -1,8 +1,10 @@
 package com.example.mumo.parkingapp.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Parking {
+public class Parking implements Serializable {
     private int id;
     private double fee;
     private String location;
@@ -20,8 +22,10 @@ public class Parking {
         this.date = date;
     }
 
-    public Parking(){}
-    public Parking(int id, String location, double fee, List<Slot> slots, int startTime, int endTime, String date){
+    public Parking() {
+    }
+
+    public Parking(int id, String location, double fee, List<Slot> slots, int startTime, int endTime, String date) {
         this.id = id;
         this.location = location;
         this.fee = fee;
@@ -29,6 +33,7 @@ public class Parking {
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
+        timeSlots = generateTimeSlots();
     }
 
     public int getId() {
@@ -80,10 +85,28 @@ public class Parking {
     }
 
     public String[] getTimeSlots() {
+
         return timeSlots;
     }
 
     public void setTimeSlots(String[] timeSlots) {
         this.timeSlots = timeSlots;
+    }
+
+    private String[] generateTimeSlots(){
+        List<String> arr = new ArrayList<>();
+
+        for (int i = startTime; i < endTime; i++) {
+            String slottime = i + "-" + (i+1);
+            arr.add(slottime);
+
+        }
+        String[] array =new String[arr.size()];
+        int i =0;
+        for (String s: arr) {
+            array[i] = s;
+            i++;
+        }
+        return array;
     }
 }

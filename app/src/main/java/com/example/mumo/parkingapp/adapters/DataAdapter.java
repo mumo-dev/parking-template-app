@@ -1,6 +1,7 @@
 package com.example.mumo.parkingapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,8 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mumo.parkingapp.BookingActivity;
+
 import com.example.mumo.parkingapp.R;
-import com.example.mumo.parkingapp.data.BookingLot;
 import com.example.mumo.parkingapp.model.Parking;
 
 import java.util.List;
@@ -42,7 +44,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ItemViewHolder
          holder.mBookTextView.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 Toast.makeText(mContext, "Item with id "+ item.getId()+" booked",Toast.LENGTH_SHORT).show();
+                 Intent i = BookingActivity.newIntent(mContext, item);
+                 mContext.startActivity(i);
              }
          });
     }
