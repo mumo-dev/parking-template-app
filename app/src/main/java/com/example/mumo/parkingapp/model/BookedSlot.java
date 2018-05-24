@@ -12,6 +12,12 @@ public class BookedSlot {
         this.refno = refno;
         this.time = time;
     }
+    public BookedSlot( int slotId, String refno, String time, String timeStamp) {
+        this.slotId = slotId;
+        this.refno = refno;
+        this.time = time;
+        this.timeStamp = timeStamp;
+    }
 
     public BookedSlot(int id, int slotId, String refno, String time, String timeStamp) {
         this.id = id;

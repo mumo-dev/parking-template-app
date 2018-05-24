@@ -107,7 +107,7 @@ public class RegisterFragment extends Fragment {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             super.onFailure(statusCode, headers, throwable, errorResponse);
-                            Log.i(TAG, "onFailure Json response:"+ errorResponse.toString());
+                          //  Log.i(TAG, "onFailure Json response:"+ errorResponse.toString());
 
                             try {
                                 JSONObject errorArray = errorResponse.getJSONObject("errors");

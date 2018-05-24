@@ -1,6 +1,7 @@
 package com.example.mumo.parkingapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -9,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -97,12 +100,31 @@ public class DashboardActivity extends AppCompatActivity implements TimePickerFr
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.dashboard_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
             return true;
+        }else if (item.getItemId() == R.id.action_logout){
+            logout();
+        }else if (item.getItemId() == R.id.action_booked){
+            startActivity(new Intent(this, DetailsActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        PreferenceUtils.setAccessToken(this,"");
+        PreferenceUtils.setUserName(this,"");
+        PreferenceUtils.setUserId(this,0);
+        PreferenceUtils.setRefreshToken(this,"");
+        startActivity(new Intent(this,MainActivity.class));
     }
 
     @Override

@@ -15,6 +15,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -26,6 +28,7 @@ import com.example.mumo.parkingapp.data.FakeData;
 import com.example.mumo.parkingapp.model.Parking;
 import com.example.mumo.parkingapp.model.Slot;
 import com.example.mumo.parkingapp.networking.ApiRestClient;
+import com.example.mumo.parkingapp.utils.PreferenceUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -79,10 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawers();
                 switch (item.getItemId()) {
                     case R.id.nav_dashboard:
-                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                        if (PreferenceUtils.getAccessToken(MainActivity.this).length()> 0) {
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                        }else{
+                            startActivity(new Intent(MainActivity.this, AccountActivity.class));
+                        }
                         return true;
                     case R.id.nav_account:
-                        startActivity(new Intent(MainActivity.this, AccountActivity.class));
+
                         return true;
                     case R.id.nav_settings:
 
@@ -128,9 +135,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mToggle.onOptionsItemSelected(item)) {
             return true;
+        }else if (item.getItemId() == R.id.action_refresh){
+            fetchData();
         }
         return super.onOptionsItemSelected(item);
     }

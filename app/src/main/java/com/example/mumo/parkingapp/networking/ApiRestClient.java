@@ -6,7 +6,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 public class ApiRestClient {
-    private static final String BASE_URL = "http://10.0.3.2:8000";
+//    private static final String BASE_URL = "http://10.0.3.2:8000";
+    private static final String BASE_URL = "https://whispering-brushlands-27448.herokuapp.com/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
